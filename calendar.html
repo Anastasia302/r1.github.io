@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <title>Календарь на 2025 год</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap">
+  <style>
+    :root {
+      --ufns-corner: 40px;
+      --ufns-corner-mobile: 24px;
+      --ufns-btn-size: 40px;
+    }
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background-color: #f9f9f9;
+      min-height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100vw;
+      transition: padding-right .24s;
+      min-height: 100vh;
+      /* calendar scroll fix */
+    }
+    header {
+      background: transparent;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+    .menu-icon {
+      position: absolute;
+      left: var(--ufns-corner);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1101;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      background-color: #007BFF;
+      border-radius: 50%;
+      margin: 0;
+      cursor: pointer;
+      user-select: none;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      transition: left .18s;
+    }
+    .menu-icon .bar {
+      width: 22px;
+      height: 3.5px;
+      background-color: white;
+      margin: 2.5px 0;
+      border-radius:1.5px;
+    }
+    .title-container {
+      flex: 1 1 0%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      pointer-events: none;
+      width: 100%;
+      position: relative;
+    }
+    .title {
+      background-color: #007BFF;
+      color: white;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      height: 46px;
+      border-radius: 50px;
+      font-size: 1.29rem;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      user-select: none;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      margin: 0 auto;
+      pointer-events: all;
+    }
+    @media (max-width: 900px) {
+      .title-container { width: 100%; justify-content: center;}
+    }
+    @media (max-width: 600px) {
+      header { height: 53px;}
+      .menu-icon, .title { height: 35px; min-height: 35px; font-size: 1.08rem;}
+      .title { padding: 0 11px;}
+      .menu-icon {
+        width: var(--ufns-btn-size);
+        height: var(--ufns-btn-size);
+        left: var(--ufns-corner-mobile);
+      }
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100vh;
+      background-color: white;
+      border-right: 1px solid #ccc;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      transition: left 0.3s ease, opacity 0.3s;
+      z-index: 1100;
+      box-sizing: border-box;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar.open {
+      left: 0;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 50vw;
+        left: -50vw;
+        min-width: 140px;
+        max-width: 100vw;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      background: none;
+      font-size: 1.13rem;
+      text-align: left;
+      cursor: pointer;
+      color: #333;
+      box-sizing: border-box;
+      user-select: none;
+      transition: background 0.13s;
+    }
+    .sidebar button.active, .sidebar button:hover {
+      background-color: #e1f0fc;
+    }
+
+    /* --- calendar layout under header --- */
+    #calendar-wrapper {
+      width: 100vw;
+      max-width: 1200px;
+      margin-top: 70px; /* под фиксированный header */
+      padding: 0 10px 50px;
+      box-sizing: border-box;
+      transition: transform 0.3s ease;
+    }
+    @media (max-width: 900px) {
+      #calendar-wrapper {
+        max-width: 98vw;
+      }
+    }
+    @media (max-width: 600px) {
+      #calendar-wrapper { margin-top: 53px; }
+    }
+    /* ------- КАЛЕНДАРЬ: остальной ваш старый CSS (адаптировано под новый контейнер) ------------ */
+
+    .month-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 0px;
+      width: 100%;
+      max-width: 1200px;
+      box-sizing: border-box;
+    }
+    .month {
+      flex: 1 1 320px;
+      margin: 10px;
+      min-width: 270px;
+      max-width: 360px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 14.29px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    @media (max-width: 900px) {
+      .month { flex: 1 1 calc(50% - 20px); }
+    }
+    @media (max-width: 600px) {
+      .month { flex-basis: 100%; margin: 5px 0; min-width: 0; max-width: 100vw; }
+      /*.title { font-size: 1.5rem; } убрали! есть выше */
+    }
+    .current-month {
+      border: 3px solid #007BFF;
+      box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+    }
+    .month h2 {
+      font-size: 2rem;
+      text-align: center;
+      margin: 0;
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 1;
+      padding: 5px 0;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .day-label {
+      text-align: center;
+      font-weight: bold;
+      color: #007BFF;
+      padding: 5px 0;
+      font-size: 0.9rem;
+    }
+    .date-circle {
+      width: 40px;
+      height: 40px;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      line-height: 40px;
+      margin: 0 auto;
+      color: #333;
+      cursor: pointer;
+      font-size: 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .date-event {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 15px;
+      height: 15px;
+      background-color: #007BFF;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+    .today {
+      border: 2px solid #007BFF;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+    .event-list {
+      display: none;
+      position: fixed;
+      z-index: 1200;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 95vw;
+      margin: 0 auto;
+      background: #f0f8ff;
+      border: 2px solid #007BFF;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+      padding: 36px 20px 20px 20px;
+    }
+    .close-button {
+      position: absolute;
+      top: 8px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #007BFF;
+      font-size: 2.5rem;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1;
+      z-index: 2001;
+      padding: 0;
+    }
+    @media (max-width: 600px) {
+      .event-list {
+        max-width: 100vw;
+        border-radius: 16px 16px 0 0;
+        padding: 30px 8px 10px 8px;
+      }
+      .close-button {
+        font-size: 2.1rem;
+        top: -10px;
+        right: 10px;
+      }
+    }
+    .event-input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 20px;
+      border: 2px solid #007BFF;
+      background: white;
+      text-align: center;
+      resize: none;
+      outline: none;
+      font-size: 16px;
+    }
+    .event-button {
+      padding: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: block;
+      margin: 10px auto;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .event-button:hover,
+    .delete-button:hover { background-color: #0056b3; }
+    .event-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      margin: 5px 0;
+      text-align: justify;
+      width: 100%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .event-item > span {
+      flex: 1 1 auto;
+      margin-right: 10px;
+      display: block;
+    }
+    .event-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .edit-button,
+    .delete-button {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .edit-button {
+      background-color: #f3f3f3;
+      color: #007BFF;
+    }
+    .edit-button:hover { background-color: #ddd; }
+    .delete-button {
+      background-color: #007BFF;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.6rem;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* --- скролл-кнопка --- */
+    .scroll-button {
+      position: fixed;
+      bottom: var(--ufns-corner);
+      right: var(--ufns-corner);
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      transition: background 0.19s, box-shadow 0.18s;
+      z-index: 2000;
+      padding: 0;
+      user-select: none;
+      outline: none;
+    }
+    .scroll-button.hidebtn { display:none !important; }
+    .scroll-button:hover, .scroll-button:focus {
+      background: #095fd0;
+      box-shadow: 0 3px 16px rgba(0, 123, 255, 0.18);
+    }
+    .scroll-arrow {
+      display: inline-block;
+      vertical-align: middle;
+      width: 23px;
+      height: 23px;
+      transition: transform .27s cubic-bezier(.46,.03,.52,.96);
+    }
+    .scroll-arrow.up {
+      transform: rotate(180deg);
+    }
+    @media (max-width: 600px){
+      .scroll-button {
+        right: var(--ufns-corner-mobile);
+        bottom: var(--ufns-corner-mobile);
+        width: var(--ufns-btn-size);
+        height: var(--ufns-btn-size);
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="menu-icon" id="menu-icon" aria-label="Открыть меню" role="button" tabindex="0">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <div class="title-container">
+    <div class="title">Календарь 2025</div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar" aria-hidden="true" role="navigation">
+  <button onclick="window.location.href='index.html'">Главная страница</button>
+  <button onclick="window.location.href='account.html'">Аккаунт</button>
+  <button onclick="window.location.href='calendar.html'" class="active">Календарь</button>
+  <button onclick="window.location.href='test.html'">Тест</button>
+  <button onclick="window.location.href='honor_board.html'">Доска почёта</button>
+  <button onclick="window.location.href='psychologist.html'">Психолог</button>
+  <button onclick="window.location.href='documents.html'">Документы</button>
+  <button onclick="window.location.href='vacation.html'">Отпуск</button>
+  <button onclick="window.location.href='lost_and_found.html'">Потеряшки</button>
+  <button onclick="window.location.href='health.html'">Здоровье</button>
+  <button onclick="window.location.href='offers.html'">Предложения</button>
+</div>
+<div id="calendar-wrapper">
+  <div class="month-container" id="month-container"></div>
+</div>
+<div class="event-list" id="event-list">
+  <button class="close-button" id="close-button" aria-label="Закрыть">&times;</button>
+  <input type="text" class="event-input" id="event-input" placeholder="Введите мероприятие" autocomplete="off" autocapitalize="none" spellcheck="false">
+  <div class="button-group">
+    <button class="event-button" id="add-event-button">Добавить</button>
+  </div>
+  <div class="events" id="events"></div>
+</div>
+<button class="scroll-button" id="scroll-button" title="Наверх/вниз">
+  <span id="scroll-arrow" class="scroll-arrow">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 10 12 16 18 10"/>
+    </svg>
+  </span>
+</button>
+<script>
+  // ========== ФУНКЦИЯ для width скроллбара ==========
+  function getScrollbarWidth() {
+    const div = document.createElement('div');
+    div.style.visibility = 'hidden';
+    div.style.overflow = 'scroll';
+    div.style.position = 'absolute';
+    div.style.top = '-9999px';
+    div.style.width = '100px';
+    div.style.height = '100px';
+    document.body.appendChild(div);
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    document.body.removeChild(div);
+    return scrollbarWidth;
+  }
+  // ===== МЕНЮ КАК В КОДЕ 2 ====
+  const menuIcon = document.getElementById('menu-icon');
+  const sidebar = document.getElementById('sidebar');
+  const calendarWrapper = document.getElementById('calendar-wrapper');
+  let scrollPos = 0;
+  function isMobile() { return window.innerWidth <= 700; }
+  function openMenu() {
+    scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    sidebar.classList.add('open');
+    sidebar.setAttribute('aria-hidden', 'false');
+    const sbw = getScrollbarWidth();
+    if (isMobile()) {
+      calendarWrapper.style.position = 'fixed';
+      calendarWrapper.style.top = `-${scrollPos}px`;
+      calendarWrapper.style.left = '0'; calendarWrapper.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    } else {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    }
+  }
+  function closeMenu() {
+    sidebar.classList.remove('open');
+    sidebar.setAttribute('aria-hidden', 'true');
+    if (isMobile()) {
+      calendarWrapper.style.position = '';
+      calendarWrapper.style.top = '';
+      calendarWrapper.style.left = '';
+      calendarWrapper.style.right = '';
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      window.scrollTo(0, scrollPos);
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
+  menuIcon.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) closeMenu(); else openMenu();
+  });
+  document.addEventListener('click', e => {
+    if (
+      sidebar.classList.contains('open') &&
+      !sidebar.contains(e.target) &&
+      !menuIcon.contains(e.target)
+    ) closeMenu();
+  });
+
+  // ========== КАЛЕНДАРЬ =================
+  const monthContainerEl = document.getElementById('month-container');
+  const scrollButton = document.getElementById('scroll-button');
+  const eventList = document.getElementById('event-list');
+  const eventInput = document.getElementById('event-input');
+  const addEventButton = document.getElementById('add-event-button');
+  const eventsContainer = document.getElementById('events');
+  const closeButton = document.getElementById('close-button');
+  const scrollArrow = document.getElementById('scroll-arrow');
+
+  const currentDate = new Date();
+  const currentYear = 2025;
+  const currentMonth = (currentDate.getFullYear() === 2025) ? currentDate.getMonth() : 0;
+  const currentDay = (currentDate.getFullYear() === 2025) ? currentDate.getDate() : 1;
+
+  let selectedDate = null;
+  let prevScrollY = 0;
+
+  function checkForEvents(monthIndex, day) {
+    const savedEvents = JSON.parse(localStorage.getItem(`events-2025-${monthIndex}-${day}`)) || [];
+    return savedEvents.length > 0;
+  }
+
+  const monthElements = [];
+
+  function renderMonth(monthIndex) {
+    const monthEl = document.createElement('div');
+    monthEl.classList.add('month');
+    monthEl.setAttribute('data-month-index', monthIndex);
+    if (monthIndex === currentMonth)
+      monthEl.classList.add('current-month');
+
+    const monthName = new Intl.DateTimeFormat('ru-RU', { month: 'long' }).format(new Date(2025, monthIndex));
+    const monthHeader = document.createElement('h2');
+    monthHeader.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    monthEl.appendChild(monthHeader);
+
+    // Дни недели
+    const daysOfWeek = document.createElement('div');
+    daysOfWeek.classList.add('calendar');
+    const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    weekDays.forEach(day => {
+      const dayLabel = document.createElement('div');
+      dayLabel.classList.add('day-label');
+      dayLabel.textContent = day;
+      daysOfWeek.appendChild(dayLabel);
+    });
+    monthEl.appendChild(daysOfWeek);
+
+    const calendarEl = document.createElement('div');
+    calendarEl.classList.add('calendar');
+
+    const firstDay = new Date(2025, monthIndex, 1);
+    const lastDay = new Date(2025, monthIndex + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const dayOfWeek = (firstDay.getDay() + 6) % 7;
+
+    for (let i = 0; i < dayOfWeek; i++) {
+      const emptyDay = document.createElement('div');
+      calendarEl.appendChild(emptyDay);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayEl = document.createElement('div');
+      const dateCircle = document.createElement('div');
+      dateCircle.className = 'date-circle';
+      dateCircle.textContent = day;
+      if (monthIndex === currentMonth && day === currentDay)
+        dateCircle.classList.add('today');
+      dateCircle.setAttribute('data-month-index', monthIndex);
+      dateCircle.setAttribute('data-day', day);
+
+      if (checkForEvents(monthIndex, day)) {
+        const eventIndicator = document.createElement('div');
+        eventIndicator.classList.add('date-event');
+        dateCircle.appendChild(eventIndicator);
+      }
+
+      dateCircle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        prevScrollY = window.scrollY; // Запоминаем, где были перед открытием модального окна
+        selectedDate = { monthIndex, day };
+        loadEventsForSelectedDate();
+        eventList.style.display = 'block';
+        scrollButton.classList.add('hidebtn');
+        setTimeout(() => { eventInput.focus(); }, 50);
+      });
+      dayEl.appendChild(dateCircle);
+      calendarEl.appendChild(dayEl);
+    }
+    monthEl.appendChild(calendarEl);
+    monthContainerEl.appendChild(monthEl);
+    monthElements[monthIndex] = monthEl;
+  }
+
+  function getDateCircleEl(monthIndex, day) {
+    const monthEl = monthElements[monthIndex];
+    if (!monthEl) return null;
+    return monthEl.querySelector(`.date-circle[data-day="${day}"]`);
+  }
+
+  function updateDateCircleIndicator(monthIndex, day) {
+    const circle = getDateCircleEl(monthIndex, day);
+    if (!circle) return;
+    if (checkForEvents(monthIndex, day)) {
+      if (!circle.querySelector('.date-event')) {
+        const eventIndicator = document.createElement('div');
+        eventIndicator.classList.add('date-event');
+        circle.appendChild(eventIndicator);
+      }
+    } else {
+      const indicator = circle.querySelector('.date-event');
+      if (indicator) indicator.remove();
+    }
+  }
+
+  function loadEventsForSelectedDate() {
+    if (!selectedDate) return;
+    const { monthIndex, day } = selectedDate;
+    const savedEvents = JSON.parse(localStorage.getItem(`events-2025-${monthIndex}-${day}`)) || [];
+    eventsContainer.innerHTML = '';
+    savedEvents.forEach(eventText => {
+      const item = document.createElement('div');
+      item.classList.add('event-item');
+      item.innerHTML =
+        `<span>${eventText}</span>
+          <div class="event-actions">
+            <button class="edit-button" data-cmd="edit" data-month="${monthIndex}" data-day="${day}" data-text="${encodeURIComponent(eventText)}">&#8230;</button>
+            <button class="delete-button" data-cmd="delete" data-month="${monthIndex}" data-day="${day}" data-text="${encodeURIComponent(eventText)}">&times;</button>
+          </div>`;
+      eventsContainer.appendChild(item);
+    });
+  }
+
+  eventsContainer.addEventListener('click', function(e) {
+    const btn = e.target.closest('button[data-cmd]');
+    if (!btn) return;
+    const cmd = btn.getAttribute('data-cmd');
+    const monthIndex = parseInt(btn.getAttribute('data-month'));
+    const day = parseInt(btn.getAttribute('data-day'));
+    const text = decodeURIComponent(btn.getAttribute('data-text'));
+
+    if (cmd === 'edit') {
+      editEvent(monthIndex, day, text);
+    } else if (cmd === 'delete') {
+      deleteEvent(monthIndex, day, text);
+    }
+  });
+
+  function closeEventList() {
+    eventList.style.display = 'none';
+    scrollButton.classList.remove('hidebtn');
+    setTimeout(() => window.scrollTo({top: prevScrollY, behavior: "auto"}), 10);
+  }
+
+  addEventButton.addEventListener('click', () => {
+    const eventText = eventInput.value.trim();
+    if (eventText && selectedDate) {
+      const { monthIndex, day } = selectedDate;
+      const savedEvents = JSON.parse(localStorage.getItem(`events-2025-${monthIndex}-${day}`)) || [];
+      savedEvents.push(eventText);
+      localStorage.setItem(`events-2025-${monthIndex}-${day}`, JSON.stringify(savedEvents));
+      eventInput.value = '';
+      loadEventsForSelectedDate();
+      updateDateCircleIndicator(monthIndex, day);
+      closeEventList(); // Закрыть окно и вернуть скролл
+    }
+  });
+
+  eventInput.addEventListener('keydown', function(event){
+    if (event.key === 'Enter') addEventButton.click();
+  });
+
+  function editEvent(monthIndex, day, eventText) {
+    const newEventText = prompt("Измените мероприятие:", eventText);
+    if (newEventText !== null) {
+      const key = `events-2025-${monthIndex}-${day}`;
+      const savedEvents = JSON.parse(localStorage.getItem(key)) || [];
+      const idx = savedEvents.indexOf(eventText);
+      if (idx >= 0) {
+        savedEvents[idx] = newEventText;
+        localStorage.setItem(key, JSON.stringify(savedEvents));
+        loadEventsForSelectedDate();
+        updateDateCircleIndicator(monthIndex, day);
+      }
+    }
+  }
+
+  function deleteEvent(monthIndex, day, eventText) {
+    const key = `events-2025-${monthIndex}-${day}`;
+    const savedEvents = JSON.parse(localStorage.getItem(key)) || [];
+    const idx = savedEvents.indexOf(eventText);
+    if (idx >= 0) {
+      savedEvents.splice(idx, 1);
+      localStorage.setItem(key, JSON.stringify(savedEvents));
+      loadEventsForSelectedDate();
+      updateDateCircleIndicator(monthIndex, day);
+    }
+  }
+
+  // ESC — закрыть окно мероприятий и вернуть скролл
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeEventList();
+  });
+
+  for (let monthIndex = 0; monthIndex < 12; monthIndex++) { renderMonth(monthIndex); }
+
+  function scrollToMonthVisible() {
+    const monthEl = monthElements[currentMonth];
+    if (monthEl) {
+      const y = monthEl.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({top: y > 0 ? y : 0, behavior: 'smooth'});
+    }
+  }
+  setTimeout(scrollToMonthVisible, 100);
+
+  closeButton.addEventListener('click', closeEventList);
+
+  // ---------- КНОПКА СКРОЛЛ ВВЕРХ/ВНИЗ ПО СТИЛЮ КОДА 2 -----------
+  function isAtTop() {
+    return (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0) < 10;
+  }
+  function updateArrow() {
+    const arrow = document.getElementById('scroll-arrow');
+    if (isAtTop()) {
+      arrow.classList.remove('up');
+      scrollButton.title = "Вниз";
+    } else {
+      arrow.classList.add('up');
+      scrollButton.title = "Вверх";
+    }
+  }
+  scrollButton.addEventListener('click', () => {
+    if (isAtTop()) {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  window.addEventListener('scroll', updateArrow);
+  updateArrow();
+</script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+  <title>Психолог 2</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap">
+  <style>
+:root {
+  --ufns-corner: 40px;
+  --ufns-corner-mobile: 24px;
+  --ufns-btn-size: 40px;
+  --chat-max-width: 530px;
+}
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  margin: 0; padding: 0;
+  font-family: 'Montserrat', Arial, sans-serif;
+  background: #f9f9f9;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  height: 100vh;
+  transition:padding-right .24s;
+}
+/* === Header прозрачный === */
+header {
+  background: transparent !important;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+.menu-icon {
+  position: absolute;
+  left: var(--ufns-corner);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: var(--ufns-btn-size);
+  height: var(--ufns-btn-size);
+  background-color: #007BFF;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: left .18s;
+}
+.menu-icon .bar {
+  width: 22px;
+  height: 3.5px;
+  background-color: white;
+  margin: 2.5px 0;
+  border-radius:1.5px;
+}
+.title-container {
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  pointer-events: none;
+  width: 100%;
+  position: relative;
+}
+.title {
+  background-color: #007BFF;
+  color: white;
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  border-radius: 50px;
+  font-size: 1.29rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  margin: 0 auto;
+  pointer-events: all;
+}
+.clear-icon {
+  position: absolute;
+  right: var(--ufns-corner);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--ufns-btn-size);
+  height: var(--ufns-btn-size);
+  background: #007BFF;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.55rem;
+  cursor: pointer;
+  z-index: 1101;
+  user-select: none;
+  box-sizing: border-box;
+  transition: right .18s, background .13s;
+}
+.clear-icon:hover, .clear-icon:focus {
+  background: #0056b3;
+  color: #fff;
+  outline: none;
+}
+@media (max-width: 600px) {
+  header { height: 53px;}
+  .menu-icon, .title { height: 35px; min-height: 35px; font-size: 1.08rem;}
+  .title { padding: 0 11px;}
+  .menu-icon{
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      left: var(--ufns-corner-mobile);}
+  .clear-icon{
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      right: var(--ufns-corner-mobile);}
+}
+/* SIDEBAR и остальная шапка */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background-color: white;
+  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease, opacity 0.3s;
+  z-index: 1100;
+  box-sizing: border-box;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar.open {
+  left: 0; opacity: 1;
+  pointer-events: auto;
+}
+@media (max-width: 700px) {
+  .sidebar {
+    width: 50vw; left: -50vw;
+    max-width: 100vw; min-width: 140px;
+  }
+  .sidebar.open { left: 0; }
+}
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-size: 1.13rem;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+  user-select: none;
+  transition: background 0.13s;
+}
+.sidebar button.active, .sidebar button:hover {
+  background-color: #e1f0fc;
+}
+#page-wrapper {
+  width: 100vw;
+  flex:1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 70px;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
+}
+@media (max-width: 600px) {
+  #page-wrapper {margin-top: 53px; min-height: calc(100vh - 53px); height:calc(100vh - 53px);}
+}
+.chat-outer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--chat-max-width);
+  flex: 1 0 auto;
+  height: 100%;
+  min-height: 0;
+  margin-bottom: 0;
+  background: transparent;
+}
+.chat-block {
+  background: #fff;
+  border-radius: 14px 14px 14px 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+  width: 100%;
+  max-width: var(--chat-max-width);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  flex: 1 1 0%;
+  height: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  position: relative;
+  padding: 22px 0 0 0; /* ! только сверху */
+  margin: 0 auto 0 auto;
+}
+@media (max-width:600px) {
+  .chat-outer, .chat-block {
+    max-width: 100vw;
+  }
+  .chat-block {
+    padding: 8px 0 0 0;
+  }
+}
+.chat-messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 60px;
+  max-height: 100%;
+  margin: 0;
+  padding-bottom: 58px;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+@media (max-width:600px) {
+  .chat-messages {
+    padding-bottom: 72px;
+  }
+}
+.chat-messages::-webkit-scrollbar { width: 0px; background:transparent; }
+
+.message-row { display: flex; flex-direction: row; justify-content: flex-end; margin-bottom: 7px;}
+.message-row .message-bubble {
+  margin-left: 50px;
+  margin-right: 14px;
+}
+.message-row.bot { justify-content: flex-start;}
+.message-row.bot .message-bubble {
+  margin-left: 14px;
+  margin-right: 50px;
+}
+.message-bubble {
+  max-width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.message-row.bot .message-bubble { align-items: flex-start; }
+.message {
+  padding: 12px 17px;
+  border-radius: 22px;
+  font-size: 1.13rem;
+  background-color: #007BFF;
+  color: white;
+  align-self: flex-end;
+  text-align: left;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+  transition: background .14s;
+  min-width: 36px;
+  max-width: 100%;
+  display: inline-block;
+}
+.message-row.bot .message {
+  background-color: #e0e3ee;
+  color: #18213c;
+  align-self: flex-start;
+}
+.msg-time {
+  font-size: .82em;
+  color: #7882a4;
+  margin: 2px 7px 1px 0;
+  text-align: right;
+  user-select: none;
+}
+.message-row.bot .msg-time {
+  text-align: left;
+  margin: 2px 0 1px 7px;
+  color: #b3b3b3;
+}
+.message-row:last-child .message-bubble { margin-bottom: 20px;}
+.message-row:last-child .message { margin-bottom: 14px !important; }
+/* ==== Поле ввода и кнопка — строго по chat-block! ==== */
+.input-form-zone {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  background: transparent;
+}
+.input-container {
+  background: #fff;
+  box-shadow: 0 -1.5px 8px #bbd3f726, 0 0 0 transparent;
+  width: 100%;
+  max-width: var(--chat-max-width);
+  min-width: 0;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  pointer-events: all;
+  padding: 10px 18px 14px 18px;
+  margin: 0 auto 0 auto;
+  box-sizing: border-box;
+  position: relative;
+}
+.input-msg {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 33px;
+  border: 1.5px solid #cce1fd;
+  font-size: 1em;
+  font-family: inherit;
+  outline: none;
+  background: #f7fcfa;
+  transition: border .15s;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+.input-msg:focus { border-color: #4faeff;}
+.send-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 1.07em;
+  padding: 0 19px;
+  margin-left: 13px;
+  cursor: pointer;
+  transition: background .14s;
+  outline: none;
+  min-height: 44px;
+  min-width: 85px;
+  box-shadow: 0 1.5px 8px #abdbff29;
+}
+.send-btn:hover, .send-btn:focus { background: #0056b3;}
+@media (max-width:600px) {
+  .chat-block, .input-container, .chat-outer { max-width: 100vw; }
+  .input-container {
+      width: 100vw; min-width:0;
+      border-radius: 0 0 14px 14px;
+      padding: 7px 2vw 16px 2vw;
+  }
+  .chat-messages {padding-bottom: 80px;}
+  .message-row:last-child .message-bubble { margin-bottom: 29px;}
+}
+.modal-mask, .intro-mask {
+  position: fixed;
+  left:0;top:0;right:0;bottom:0;
+  background: rgba(0,0,0,0.17);
+  z-index: 2003;
+  display: flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.modal-window, .intro-window {
+  background: #fff;
+  border-radius: 23px;
+  box-shadow: 0 2px 25px #2224;
+  padding: 25px 25px 20px 25px;
+  min-width: 0;
+  max-width: 98vw;
+  width: 350px;
+  position: relative;
+  color: #294;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size:1.01em;
+}
+.modal-title, .intro-title{
+  font-size:1.18rem;
+  font-weight:700;
+  color: #1276be;
+  margin-bottom: 12px;
+  text-align:center;
+}
+.modal-content, .intro-content {
+  font-size:1.01em;
+  color:#204056;
+  text-align:left;
+  margin-bottom: 13px;
+  width: 100%;
+}
+.intro-list {
+  padding: 0 0 5px 13px;
+  margin: 0 0 0 0;
+  color: #007bff;
+  font-size: 1em;
+}
+.modal-actions, .intro-actions {
+  text-align:center;
+  margin-top:8px;
+  width:100%;
+}
+.modal-btn, .intro-btn {
+  background: #007bff;
+  color: #fff;
+  padding: 12px 34px;
+  border-radius: 30px;
+  font-weight: 700;
+  border: none;
+  font-size: 1em;
+  margin: 0 13px;
+  cursor: pointer;
+  transition: background .14s;
+}
+.modal-btn.cancel {
+  background: #fff;
+  color: #1276be;
+  border: 1.5px solid #1276be;
+}
+.modal-btn:hover, .intro-btn:hover, .modal-btn.cancel:hover {background:#0056b3; color: #fff;}
+.intro-btn.cancel {
+  background: #eceff8;
+  color: #297;
+}
+.intro-close {
+  position: absolute;
+  right: 17px; top: 11px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 1.59em;
+  cursor: pointer;
+  outline: none;
+}
+.intro-close:hover { color: #1976cf; }
+  </style>
+</head>
+<body>
+<header>
+    <div class="menu-icon" id="menu-icon" aria-label="Открыть меню" role="button" tabindex="0">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div>
+    <div class="title-container">
+        <div class="title">Психолог 2</div>
+    </div>
+    <div class="clear-icon" id="clear-icon" title="Очистить">×</div>
+</header>
+<div class="sidebar" id="sidebar" aria-hidden="true" role="navigation">
+    <button onclick="window.location.href='index.html'">Главная страница</button>
+    <button onclick="window.location.href='account.html'">Аккаунт</button>
+    <button onclick="window.location.href='calendar.html'">Календарь</button>
+    <button onclick="window.location.href='test.html'">Тест</button>
+    <button onclick="window.location.href='honor_board.html'">Доска почёта</button>
+    <button onclick="window.location.href='psychologist.html'">Психолог</button>
+    <button onclick="window.location.href='documents.html'">Документы</button>
+    <button onclick="window.location.href='vacation.html'">Отпуск</button>
+    <button onclick="window.location.href='lost_and_found.html'">Потеряшки</button>
+    <button onclick="window.location.href='health.html'">Здоровье</button>
+    <button onclick="window.location.href='offers.html'">Предложения</button>
+</div>
+<div id="page-wrapper" tabindex="-1">
+  <div class="chat-outer">
+    <div class="chat-block">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="input-form-zone">
+        <form class="input-container" id="chat-input-form" autocomplete="off">
+          <input type="text" class="input-msg" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" />
+          <button type="submit" class="send-btn" id="sendButton">Отправить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="modalZone"></div>
+<script>
+  // SIDE BAR
+  function getScrollbarWidth() {
+      const div = document.createElement('div');
+      div.style.visibility = 'hidden';
+      div.style.overflow = 'scroll';
+      div.style.position = 'absolute';
+      div.style.top = '-9999px';
+      div.style.width = '100px';
+      div.style.height = '100px';
+      document.body.appendChild(div);
+      const scrollbarWidth = div.offsetWidth - div.clientWidth;
+      document.body.removeChild(div);
+      return scrollbarWidth;
+  }
+  const menuIcon = document.getElementById('menu-icon');
+  const sidebar = document.getElementById('sidebar');
+  const pageWrapper = document.getElementById('page-wrapper');
+  let scrollPos = 0;
+  function isMobile() { return window.innerWidth <= 700;}
+  function openMenu() {
+      scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+      sidebar.classList.add('open');
+      sidebar.setAttribute('aria-hidden', 'false');
+      const sbw = getScrollbarWidth();
+      if (isMobile()) {
+          pageWrapper.style.position = 'fixed';
+          pageWrapper.style.top = `-${scrollPos}px`;
+          pageWrapper.style.left = '0'; pageWrapper.style.right = '0';
+          document.body.style.overflow = 'hidden';
+          document.body.style.paddingRight = sbw + 'px';
+      } else {
+          document.body.style.overflow = 'hidden';
+          document.body.style.paddingRight = sbw + 'px';
+      }
+  }
+  function closeMenu() {
+      sidebar.classList.remove('open');
+      sidebar.setAttribute('aria-hidden', 'true');
+      if (isMobile()) {
+          pageWrapper.style.position = '';
+          pageWrapper.style.top = '';
+          pageWrapper.style.left = '';
+          pageWrapper.style.right = '';
+          document.body.style.overflow = '';
+          document.body.style.paddingRight = '';
+          window.scrollTo(0, scrollPos);
+      } else {
+          document.body.style.overflow = '';
+          document.body.style.paddingRight = '';
+      }
+  }
+  menuIcon.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) closeMenu(); else openMenu();
+  });
+  document.addEventListener('click', e => {
+      if (
+          sidebar.classList.contains('open')
+          && !sidebar.contains(e.target)
+          && !menuIcon.contains(e.target)
+      ) closeMenu();
+  });
+
+  // CHAT LOGIC
+  const LS_KEY = "ufnsPsychologistChatHistory";
+  let msgHistory = [];
+  function loadHistory() {
+    try {
+      msgHistory = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+      if (!Array.isArray(msgHistory)) msgHistory=[];
+    } catch(e) {
+      msgHistory = [];
+    }
+  }
+  function saveHistory() {
+    localStorage.setItem(LS_KEY, JSON.stringify(msgHistory));
+  }
+  const chatMessages = document.getElementById('chat-messages');
+  function renderMessages() {
+    chatMessages.innerHTML = "";
+    for(const msg of msgHistory) {
+      const row = document.createElement('div');
+      row.className = "message-row user";
+      let bubble = document.createElement('div');
+      bubble.className = "message-bubble";
+      let div = document.createElement('div');
+      div.className = "message user";
+      div.textContent = msg.text;
+      let time = document.createElement('div');
+      time.className = "msg-time";
+      time.textContent = formatTime(msg.time || Date.now());
+      bubble.appendChild(div);
+      bubble.appendChild(time);
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+    }
+    setTimeout(()=>{ chatMessages.scrollTop = chatMessages.scrollHeight; }, 30);
+  }
+  function formatTime(t) {
+    const dt = new Date(t);
+    return dt.toLocaleString("ru-RU", {hour:"2-digit", minute:"2-digit", day:"2-digit", month:"2-digit"});
+  }
+  function addMessage(text, type) {
+    const msg = {text, type, time: Date.now()};
+    msgHistory.push(msg);
+    saveHistory();
+    renderMessages();
+  }
+  function showInfoModal() {
+    if (document.getElementById('introPsychologistModal')) return;
+    const zone = document.getElementById('modalZone');
+    const modal = document.createElement('div');
+    modal.className = "intro-mask";
+    modal.id = "introPsychologistModal";
+    modal.innerHTML = `
+      <div class="intro-window">
+        <button class="intro-close" title="Закрыть" id="introCloseBtn">&times;</button>
+        <div class="intro-title">Психолог скоро появится!</div>
+        <div class="intro-content">
+          <b>Пока у нас нет закреплённого психолога на портале.</b><br><br>
+          Как только появится — вы сможете здесь с ним переписываться.<br>
+          <br>
+          <span style="color:#007bff">А пока&nbsp; — воспользуйтесь <b>чат-ботом поддержки</b>!</span>
+        </div>
+        <div class="intro-actions">
+          <button class="intro-btn" id="introOKBtn">Ок</button>
+        </div>
+      </div>
+    `;
+    zone.appendChild(modal);
+    document.getElementById('introOKBtn').onclick = function(){ modal.remove(); };
+    document.getElementById('introCloseBtn').onclick = function(){ modal.remove(); };
+    modal.addEventListener('mousedown',e=>{
+      if(e.target===modal) modal.remove();
+    });
+  }
+  const clearIcon = document.getElementById('clear-icon');
+  const messageInput = document.getElementById('messageInput');
+  const chatForm = document.getElementById('chat-input-form');
+  clearIcon.addEventListener('click', function() {
+    if (document.getElementById('deleteChatModal')) return;
+    const zone = document.getElementById('modalZone');
+    const modal = document.createElement('div');
+    modal.className = "modal-mask";
+    modal.id = "deleteChatModal";
+    modal.innerHTML = `
+      <div class="modal-window">
+        <div class="modal-title">Подтвердите удаление</div>
+        <div class="modal-content">Точно удалить весь диалог?<br>Восстановить данные после очистки будет невозможно!</div>
+        <div class="modal-actions">
+          <button class="modal-btn" id="modalYes">Удалить</button>
+          <button class="modal-btn cancel" id="modalCancel">Отмена</button>
+        </div>
+      </div>
+    `;
+    zone.appendChild(modal);
+    document.getElementById('modalYes').onclick = ()=>{
+      msgHistory = [];
+      saveHistory();
+      renderMessages();
+      zone.removeChild(modal);
+    };
+    document.getElementById('modalCancel').onclick = function() {zone.removeChild(modal)};
+    modal.addEventListener('mousedown',e=>{
+      if(e.target===modal) zone.removeChild(modal);
+    });
+  });
+  chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userMessage = messageInput.value.trim();
+      if (!userMessage) return;
+      addMessage(userMessage, "user");
+      messageInput.value = '';
+      messageInput.focus();
+      // НЕ ОТВЕЧАТЬ НИЧЕГО!
+  });
+  messageInput.addEventListener('focus', ()=>{
+    setTimeout(()=>{
+      window.scrollTo({ top: document.body.scrollHeight});
+    }, 400);
+  });
+
+  loadHistory();
+  renderMessages();
+  window.addEventListener('DOMContentLoaded',showInfoModal);
+</script>
+</body>
+</html>

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <title>Здоровье — УФНС России</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap">
+  <style>
+    :root {
+      --ufns-corner: 40px;
+      --ufns-corner-mobile: 24px;
+      --ufns-btn-size: 40px;
+    }
+    html { min-height: 100vh; box-sizing: border-box; max-width: 100vw; overflow-x: hidden !important;}
+    body {
+      margin: 0; padding: 0;
+      max-width: 100vw;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background-color: #f9f9f9;
+      font-size: 1rem;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition:padding-right .24s;
+    }
+    header {
+      background: transparent;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+    .menu-icon {
+      position: absolute;
+      left: var(--ufns-corner);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1101;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      background-color: #007BFF;
+      border-radius: 50%;
+      margin: 0;
+      cursor: pointer;
+      user-select: none;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      transition: left .18s;
+    }
+    .menu-icon .bar {
+      width: 22px;
+      height: 3.5px;
+      background-color: white;
+      margin: 2.5px 0;
+      border-radius:1.5px;
+      display: block;
+    }
+    .title-container {
+      flex: 1 1 0%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      pointer-events: none;
+      width: 100%;
+      position: relative;
+    }
+    .title {
+      background-color: #007BFF;
+      color: white;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      height: 46px;
+      border-radius: 50px;
+      font-size: 1.29rem;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      user-select: none;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      margin: 0 auto;
+      pointer-events: all;
+    }
+    @media (max-width: 900px) {
+      .title-container { width: 100%; justify-content: center;}
+    }
+    @media (max-width: 600px) {
+      header { height: 53px;}
+      .menu-icon, .title { height: 35px; min-height: 35px; font-size: 1.08rem;}
+      .title { padding: 0 11px;}
+      .menu-icon {
+        width: var(--ufns-btn-size);
+        height: var(--ufns-btn-size);
+        left: var(--ufns-corner-mobile);
+      }
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100vh;
+      background-color: white;
+      border-right: 1px solid #ccc;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      transition: left 0.3s ease, opacity 0.3s;
+      z-index: 1100;
+      box-sizing: border-box;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sidebar.open {
+      left: 0;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 50vw;
+        left: -50vw;
+        max-width: 100vw;
+        min-width: 140px;
+      }
+      .sidebar.open {
+        left: 0;
+      }
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      background: none;
+      font-size: 1.13rem;
+      text-align: left;
+      cursor: pointer;
+      color: #333;
+      box-sizing: border-box;
+      user-select: none;
+      transition: background 0.13s;
+    }
+    .sidebar button.active, .sidebar button:hover {
+      background-color: #e1f0fc;
+    }
+    #page-wrapper {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 70px;
+      padding: 0 10px 50px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 80vh;
+    }
+    .health-block {
+      background: #fff;
+      padding: 27px 10px 28px 10px;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+      width: 100%;
+      max-width: 600px;
+      margin: 8px auto 0 auto;
+      min-width: 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .health-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #007BFF;
+      margin: 0 auto 14px;
+      letter-spacing: 0.4px;
+      text-align: center;
+      width: 100%;
+    }
+    .tips-list {
+      margin: 3px 0 26px 0;
+      padding: 0;
+      list-style: none;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .tip-card {
+      background: linear-gradient(97deg,#f4faff 20%, #ecfaff 120%);
+      border: 2px solid #e9f3fd;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px #007bff0d;
+      padding: 14px 15px 13px 15px;
+      word-break: break-word;
+      position: relative;
+      transition: box-shadow .15s, border .15s, background .11s;
+      outline:none;
+      user-select: none;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      text-align: justify;
+    }
+    .tip-head {
+      color: #2175d7;
+      font-weight: 700;
+      font-size: 1.07em;
+      margin-bottom: .25em;
+      margin-right: 10px;
+    }
+    .btn-trigger {
+      background: none;
+      border: 2px solid #007BFF;
+      color: #007BFF;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-left: auto;
+      transition: background .15s, color .15s;
+    }
+    .btn-trigger:hover {
+      background: #007BFF;
+      color: white;
+    }
+    .mini-indicator {
+      position: absolute;
+      top: 16px;
+      right: 19px;
+      padding: 1px 11px 0 11px;
+      border-radius:13px;
+      font-weight: 700;
+      font-size: .90em;
+      opacity: .91;
+      pointer-events:none;
+      user-select:none;
+      box-shadow: 0 2px 8px #87cfff42;
+      white-space: nowrap;
+      max-width:80%;
+      text-align:center;
+    }
+    .mini-indicator             { background: #e0ffe7; color: #0a8906; }
+    .mini-indicator.done        { background: #e7f3fe !important; color: #2196F3 !important; }
+    .mini-indicator.eaten       { background: #fff6d0 !important; color: #a17917 !important; }
+    .mini-indicator.posture     { background: #e8dfff !important; color: #713bc7 !important;}
+    .mini-indicator.health      { background: #e6e6e6 !important; color: #444 !important;}
+    .mini-indicator.checkup     { background: #e7f3fe !important; color: #1976d2 !important; }
+    @media (hover:hover) and (pointer:fine){
+      .tip-card:hover {border-color: #2196f3;}
+    }
+    @media (max-width:600px){
+      .tip-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 26px;
+      }
+      .tip-card .mini-indicator {
+        position: static;
+        margin-left: 0;
+        margin-top: 8px;
+        margin-bottom: 0;
+        display: inline-block;
+        width: max-content;
+        max-width:100%;
+        top: auto; right: auto;
+        transform: none !important;
+      }
+    }
+    .my-reminders-title {
+      font-size: 1.04rem;
+      color: #2175d7;
+      margin: 18px auto 7px 0;
+      font-weight: 700;
+      width:100%;
+    }
+    .reminder-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+    .reminder-form input {
+      flex: 1;
+      background: #f7fcfa;
+      border: 1.5px solid #bbe2ff;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 1em;
+      font-family: inherit;
+      outline: none;
+      transition: border .14s;
+      box-sizing: border-box;
+    }
+    .reminder-form input:focus {
+      border-color: #4faeff;
+    }
+    .reminder-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1.07em;
+      padding: 0 19px;
+      cursor: pointer;
+      transition: background .14s;
+      outline: none;
+    }
+    .reminder-btn:hover, .reminder-btn:focus {
+      background: #005ad7;
+    }
+    .reminders-list {
+      width: 100%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .reminder-item {
+      background: #e7f3fe;
+      border: 1.3px solid #b3d9fe;
+      border-radius: 8px;
+      padding: 9px 13px;
+      color: #1976d2;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      word-break: break-word;
+    }
+    .reminder-remove-btn {
+      background: #fff;
+      color: #b43c3c;
+      border: none;
+      border-radius: 7px;
+      font-weight: 700;
+      font-size: .95em;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: background .13s, color .13s;
+      margin-left: 10px;
+    }
+    .reminder-remove-btn:hover {
+      background: #ffdbe1;
+      color: #940808;
+    }
+    /* -------- Модальные окна --------- */
+    .modal-mask {
+      position: fixed;
+      background: rgba(0,0,0,0.13);
+      z-index: 4000;
+      left:0;top:0;right:0;bottom:0;
+      display: flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      animation: modalfadein .18s;
+    }
+    @keyframes modalfadein{
+      from{opacity:0} to{opacity:1}
+    }
+    .modal-window {
+      background: #fff;
+      border-radius: 19px;
+      box-shadow: 0 2px 27px #2224;
+      padding: 29px 22px 22px 22px;
+      min-width: 0;
+      max-width: 94vw;
+      width: 325px;
+      position: relative;
+      color: #294;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: modalpopin .25s;
+    }
+    @keyframes modalpopin{
+      0%{transform:scale(.91) translateY(32px);}
+      70%{transform:scale(1.05) translateY(-9px);}
+      100%{transform:scale(1) translateY(0);}
+    }
+    .modal-title{
+      font-size:1.11rem;
+      font-weight:700;
+      color: #1276be;
+      margin-bottom: 12px;
+      text-align:center;
+    }
+    .modal-content {
+      font-size:1.01em;
+      color:#19797a;
+      text-align:center;
+      margin-bottom: 14px;
+    }
+    .modal-close-btn{
+      background:none;
+      border:none;
+      color:#b53c3c;
+      font-size:1.15em;
+      position:absolute;
+      top:12px;
+      right:17px;
+      font-weight:700;
+      cursor:pointer;
+      transition: color .17s;
+      padding: 3px 7px;
+      border-radius:12px;
+    }
+    .modal-close-btn:hover,.modal-close-btn:focus{color:#fff;background:#c02929;}
+    .modal-footer {
+      width:100%;
+      text-align:center;
+      margin-top:6px;
+    }
+    .modal-check-btn, .modal-count-btn {
+      background: #007bff;
+      color: white;
+      font-size: 1.08em;
+      font-weight: 700;
+      padding: 8px 26px 9px 26px;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      margin: 7px 5px 3px 5px;
+      transition: background .15s;
+      outline:none;
+      display:inline-block;
+    }
+    .modal-check-btn.done {
+      background: #1976d2;
+    }
+    .modal-count-btn {
+      background: #1976d2;
+      min-width:38px;
+      border-radius:34px;
+      padding: 7px 14px 8px 14px;
+      margin: 0 5px;
+      font-size:1.17em;
+    }
+    .modal-table {
+      width: 100%;
+      text-align: center;
+      margin: 7px 0;
+    }
+    .modal-table td {
+      font-size: 1.23em;
+      color: #227ae1;
+      padding: 7px 0;
+    }
+    .modal-small {
+      font-size:0.99em;
+      color:#8ba0a6;
+      margin:4px 0;
+    }
+    .modal-reset-btn {
+      background: none;
+      border: none;
+      color: #1976d2;
+      font-size: 1em;
+      text-decoration: underline;
+      padding: 0 14px;
+      cursor: pointer;
+      transition: color .15s;
+    }
+    .modal-reset-btn:hover, .modal-reset-btn:focus {
+      color: #1a237e;
+    }
+    @media (max-width: 400px) {
+      .modal-window {width:98vw;}
+    }
+    .scroll-button {
+      position: fixed;
+      bottom: var(--ufns-corner);
+      right: var(--ufns-corner);
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      transition: background 0.19s, box-shadow 0.18s;
+      z-index: 2000;
+      padding: 0;
+      user-select: none;
+      outline: none;
+    }
+    .scroll-button:hover, .scroll-button:focus {
+      background: #095fd0;
+      box-shadow: 0 3px 16px rgba(0, 123, 255, 0.18);
+    }
+    .scroll-arrow {
+      display: inline-block;
+      vertical-align: middle;
+      width: 23px;
+      height: 23px;
+      transition: transform .27s cubic-bezier(.46,.03,.52,.96);
+    }
+    .scroll-arrow.up {
+      transform: rotate(180deg);
+    }
+    @media (max-width: 600px){
+      .scroll-button {
+        right: var(--ufns-corner-mobile);
+        bottom: var(--ufns-corner-mobile);
+        width: var(--ufns-btn-size);
+        height: var(--ufns-btn-size);
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="menu-icon" id="menu-icon" aria-label="Открыть меню" role="button" tabindex="0">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <div class="title-container">
+    <div class="title">Здоровье</div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar" aria-hidden="true" role="navigation">
+  <button onclick="window.location.href='index.html'">Главная страница</button>
+  <button onclick="window.location.href='account.html'">Аккаунт</button>
+  <button onclick="window.location.href='calendar.html'">Календарь</button>
+  <button onclick="window.location.href='test.html'">Тест</button>
+  <button onclick="window.location.href='honor_board.html'">Доска почёта</button>
+  <button onclick="window.location.href='psychologist.html'">Психолог</button>
+  <button onclick="window.location.href='documents.html'">Документы</button>
+  <button onclick="window.location.href='vacation.html'">Отпуск</button>
+  <button onclick="window.location.href='lost_and_found.html'">Потеряшки</button>
+  <button onclick="window.location.href='health.html'" class="active">Здоровье</button>
+  <button onclick="window.location.href='offers.html'">Предложения</button>
+</div>
+<div id="page-wrapper" tabindex="-1">
+  <div class="health-block">
+    <div class="health-title">Ваше здоровье — ваша ценность!</div>
+    <ul class="tips-list" id="tipsList">
+      <li class="tip-card" data-tip="breaks">
+        <div class="tip-head">Делайте небольшие перерывы</div>
+        Каждый час старайтесь встать и немного размяться. Даже короткая прогулка по коридору поможет снять усталость и улучшить кровообращение.
+        <button class="btn-trigger" onclick="showTipModal('breaks')">ℹ</button>
+        <span class="mini-indicator" id="mini-breaks" style="display:none;"></span>
+      </li>
+      <li class="tip-card" data-tip="eyes">
+        <div class="tip-head">Гимнастика для глаз</div>
+        Через каждые 40 минут переводите взгляд на удалённый предмет (не менее 20 секунд), делайте круговые движения глазами.
+        <button class="btn-trigger" onclick="showTipModal('eyes')">ℹ</button>
+        <span class="mini-indicator done" id="mini-eyes" style="display:none;"></span>
+      </li>
+      <li class="tip-card" data-tip="posture">
+        <div class="tip-head">Правильная осанка</div>
+        Следите, чтобы спина и поясница были прямыми, а колени находились под прямым углом.
+        <button class="btn-trigger" onclick="showTipModal('posture')">ℹ</button>
+        <span class="mini-indicator posture" id="mini-posture" style="display:none;"></span>
+      </li>
+      <li class="tip-card" data-tip="water">
+        <div class="tip-head">Пейте достаточно воды</div>
+        Старайтесь пить чистую воду в течение дня, используя персональную бутылку.
+        <button class="btn-trigger" onclick="showTipModal('water')">ℹ</button>
+        <span class="mini-indicator health" id="mini-water" style="display:none;"></span>
+      </li>
+      <li class="tip-card" data-tip="food">
+        <div class="tip-head">Умеренно питайтесь</div>
+        Перекусывайте фруктами, орехами, не забывайте о полноценном обеде.
+        <button class="btn-trigger" onclick="showTipModal('food')">ℹ</button>
+        <span class="mini-indicator eaten" id="mini-food" style="display:none;"></span>
+      </li>
+      <li class="tip-card" data-tip="checkup">
+        <div class="tip-head">Посещайте профосмотры</div>
+        По вопросам диспансеризации обращайтесь к сотруднику отдела кадров или в медицинский кабинет УФНС.
+        <button class="btn-trigger" onclick="showTipModal('checkup')">ℹ</button>
+        <span class="mini-indicator checkup" id="mini-checkup" style="display:none;"></span>
+      </li>
+    </ul>
+    <div class="my-reminders-title">Мои напоминания о здоровье</div>
+    <form class="reminder-form" id="reminderForm" autocomplete="off">
+      <input type="text" id="reminderText" placeholder="Добавьте напоминание (например, 'размяться')" maxlength="60" required>
+      <button type="submit" class="reminder-btn">Добавить</button>
+    </form>
+    <ul class="reminders-list" id="remindersList"></ul>
+  </div>
+</div>
+<button class="scroll-button" id="scroll-button" title="Наверх/вниз">
+  <span id="scroll-arrow" class="scroll-arrow">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 10 12 16 18 10"/>
+    </svg>
+  </span>
+</button>
+<div id="modalZone"></div>
+<script>
+  // --- ЕЖЕДНЕВНЫЙ СБРОС СТАТУСОВ ---
+  function getTodayStr() {
+    return (new Date()).toISOString().slice(0,10);
+  }
+  function loadTipState() {
+    const today = getTodayStr();
+    let tipState = {};
+    let tipsDate = localStorage.getItem('tipsState_UFNS_date') || "";
+    if (tipsDate !== today) {
+      localStorage.setItem('tipsState_UFNS', '{}');
+      localStorage.setItem('tipsState_UFNS_date', today);
+      tipState = {};
+    } else {
+      try {
+        tipState = JSON.parse(localStorage.getItem('tipsState_UFNS') || '{}');
+      } catch(e) {
+        tipState = {};
+      }
+    }
+    return tipState;
+  }
+  let tipState = loadTipState();
+
+  // ------ МЕНЮ ------
+  function getScrollbarWidth() {
+    const div = document.createElement('div');
+    div.style.visibility = 'hidden';
+    div.style.overflow = 'scroll';
+    div.style.position = 'absolute';
+    div.style.top = '-9999px';
+    div.style.width = '100px';
+    div.style.height = '100px';
+    document.body.appendChild(div);
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    document.body.removeChild(div);
+    return scrollbarWidth;
+  }
+  const menuIcon = document.getElementById('menu-icon');
+  const sidebar = document.getElementById('sidebar');
+  const pageWrapper = document.getElementById('page-wrapper');
+  let scrollPos = 0;
+  function isMobile() { return window.innerWidth <= 700;}
+  function openMenu() {
+    scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    sidebar.classList.add('open');
+    sidebar.setAttribute('aria-hidden', 'false');
+    const sbw = getScrollbarWidth();
+    if (isMobile()) {
+      pageWrapper.style.position = 'fixed';
+      pageWrapper.style.top = `-${scrollPos}px`;
+      pageWrapper.style.left = '0'; pageWrapper.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    } else {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    }
+  }
+  function closeMenu() {
+    sidebar.classList.remove('open');
+    sidebar.setAttribute('aria-hidden', 'true');
+    if (isMobile()) {
+      pageWrapper.style.position = '';
+      pageWrapper.style.top = '';
+      pageWrapper.style.left = '';
+      pageWrapper.style.right = '';
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      window.scrollTo(0, scrollPos);
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
+  menuIcon.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) closeMenu(); else openMenu();
+  });
+  document.addEventListener('click', e => {
+    if (
+      sidebar.classList.contains('open') &&
+      !sidebar.contains(e.target) &&
+      !menuIcon.contains(e.target)
+    ) closeMenu();
+  });
+
+  // ------ "Вверх/вниз" ------
+  const scrollButton = document.getElementById('scroll-button');
+  const scrollArrow = document.getElementById('scroll-arrow');
+  function isAtTop() {
+    return (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0) < 10;
+  }
+  function updateArrow() {
+    const arrow = document.getElementById('scroll-arrow');
+    if (isAtTop()) {
+      arrow.classList.remove('up');
+      scrollButton.title = "Вниз";
+    } else {
+      arrow.classList.add('up');
+      scrollButton.title = "Вверх";
+    }
+  }
+  scrollButton.addEventListener('click', () => {
+    if (isAtTop()) {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  window.addEventListener('scroll', updateArrow);
+  updateArrow();
+
+  // ------ ЛОГИКА НАПОМИНАНИЙ ------
+  const remindersList = document.getElementById('remindersList');
+  let reminders = [];
+  function saveReminders() {
+    localStorage.setItem('healthReminders_UFNS', JSON.stringify(reminders));
+  }
+  function loadReminders() {
+    try {
+      reminders = JSON.parse(localStorage.getItem('healthReminders_UFNS') || '[]');
+    } catch(e) { reminders = []; }
+  }
+  function renderReminders() {
+    remindersList.innerHTML = '';
+    reminders.forEach((item, idx) => {
+      let li = document.createElement('li');
+      li.className = 'reminder-item';
+      li.innerHTML = `
+        <span>${item}</span>
+        <button class="reminder-remove-btn" title="Удалить" onclick="removeReminder(${idx})">Удалить</button>
+      `;
+      remindersList.appendChild(li);
+    });
+  }
+  document.getElementById('reminderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let text = document.getElementById('reminderText').value.trim();
+    if (!text) return;
+    reminders.unshift(text);
+    saveReminders();
+    renderReminders();
+    document.getElementById('reminderText').value = '';
+  });
+  window.removeReminder = function(idx) {
+    reminders.splice(idx,1);
+    saveReminders();
+    renderReminders();
+  };
+  loadReminders();
+  renderReminders();
+
+  // ----------- ИНТЕРАКТИВНЫЕ СОВЕТЫ -----------
+  function updateMiniIndicators() {
+    let el = document.getElementById('mini-breaks');
+    if(tipState.breaks) { el.textContent = "✔ Выполнено!"; el.className = "mini-indicator"; el.style.display = ""; } else { el.style.display = "none";}
+    el = document.getElementById('mini-eyes');
+    if(tipState.eyes) { el.textContent = "✔ Сделано!"; el.className = "mini-indicator done"; el.style.display = ""; } else { el.style.display = "none";}
+    el = document.getElementById('mini-posture');
+    if(tipState.posture) { el.textContent = "✔ Контроль!"; el.className = "mini-indicator posture"; el.style.display = ""; } else { el.style.display = "none";}
+    el = document.getElementById('mini-water');
+    if(+tipState.water > 0) { el.textContent =  tipState.water+" стак."; el.className = "mini-indicator health"; el.style.display = ""; }
+      else { el.style.display = "none";}
+    el = document.getElementById('mini-food');
+    if(tipState.food) { el.textContent = "🍏 Перекус!"; el.className = "mini-indicator eaten"; el.style.display = ""; } else { el.style.display = "none";}
+    el = document.getElementById('mini-checkup');
+    if(tipState.checkup) { el.textContent = "✔ Записан(а)"; el.className = "mini-indicator checkup"; el.style.display = ""; } else { el.style.display = "none";}
+  }
+  function setTipsData() {
+    localStorage.setItem('tipsState_UFNS', JSON.stringify(tipState));
+    localStorage.setItem('tipsState_UFNS_date', getTodayStr());
+    updateMiniIndicators();
+  }
+  updateMiniIndicators();
+
+  function showTipModal(type) {
+    let content = "", title = "", footer = "";
+    let val = tipState[type];
+    if(type==="breaks"){
+      title = "Перерыв на разминку";
+      content = `Сделайте пару движений, умойтесь, встряхните руки и плечи!<br><br><b>Вы сделали перерыв?</b>`;
+      footer = `<button class="modal-check-btn${val?' done':''}" onclick="modalDone('breaks',this)">${val?'Выполнено':'Отметить как выполнено'}</button>`;
+    }
+    if(type==="eyes"){
+      title = "Гимнастика для глаз";
+      content = `Посмотрите вдаль, поднимите/опустите/повертите глазами.<br><br><b>Гимнастика выполнена?</b>`;
+      footer = `<button class="modal-check-btn${val?' done':''}" onclick="modalDone('eyes',this)">${val?'Выполнено':'Отметить как выполнено'}</button>`;
+    }
+    if(type==="posture"){
+      title = "Контроль осанки";
+      content = `Проверьте, что спина прямая, плечи не зажаты, ноги под прямым углом.<br><br><b>Осанка в порядке?</b>`;
+      footer = `<button class="modal-check-btn${val?' done':''}" onclick="modalDone('posture',this)">${val?'Контроль!':'Да, сижу правильно'}</button>`;
+    }
+    if(type==="water"){
+      title = "Стаканы воды";
+      let n = parseInt(val)||0;
+      content = `<div>Сколько стаканов воды вы выпили сегодня?</div>
+          <div class="modal-table">
+            <button class="modal-count-btn" onclick="modalStepWater(-1);return false;">-</button>
+            <span style="font-size:2em;width:44px;display:inline-block;text-align:center;" id="waterCounter">${n}</span>
+            <button class="modal-count-btn" onclick="modalStepWater(+1);return false;">+</button>
+          </div>
+          <div class="modal-small">Рекомендуется: 5-8 стаканов в день</div>
+          <button class="modal-reset-btn" onclick="resetWater();return false;">Сбросить счётчик</button>`;
+      footer = ``;
+    }
+    if(type==="food"){
+      title = "Питание";
+      content = "Не забыли перекусить или пообедать?<br><br><b>Перекус/Обед был?</b>";
+      footer = `<button class="modal-check-btn${val?' done':''}" onclick="modalDone('food',this)">${val?'Перекус был':'Отметить'}</button>`;
+    }
+    if(type==="checkup"){
+      title = "Профосмотр/Диспансеризация";
+      content = "Запланируйте и посетите профосмотр!<br><br><b>Вы записались/прошли?</b>";
+      footer = `<button class="modal-check-btn${val?' done':''}" onclick="modalDone('checkup',this)">${val?'✔ Записан(а)':'Отметить'}</button>`;
+    }
+    showModal(title,content,footer,type);
+  }
+  function showModal(title,content,footer,tipType){
+    let modal = document.createElement("div");
+    modal.className = "modal-mask";
+    modal.tabIndex = 0;
+    modal.innerHTML = `
+      <div class="modal-window" role="dialog">
+        <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+        <div class="modal-title">${title}</div>
+        <div class="modal-content" id="modalContent">${content}</div>
+        <div class="modal-footer">${footer||""}</div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.focus();
+    modal.addEventListener('wheel',e=>e.stopPropagation(),{passive:false});
+    window._curTip = tipType;
+    setTimeout(()=>{
+      document.querySelector(".modal-window").focus();
+    },200);
+  }
+  window.closeModal = function() {
+    let m = document.querySelector('.modal-mask');
+    if(m) m.parentNode.removeChild(m);
+  }
+  window.modalDone = function(type,btn){
+    tipState = loadTipState(); // <= на каждый клик переконсервируем состояние на сегодня
+    if(tipState[type]) {
+      tipState[type]=0;
+      btn.textContent = (type==="posture"?"Да, сижу правильно":(type==="food"?"Отметить":(type==="checkup"?"Отметить":"Отметить как выполнено")));
+      btn.classList.remove('done');
+    } else {
+      tipState[type]=1;
+      btn.textContent = (type==="posture"?"Контроль!":(type==="food"?"Перекус был":(type==="checkup"?"✔ Записан(а)":"Выполнено")));
+      btn.classList.add('done');
+    }
+    setTipsData();
+  }
+  window.modalStepWater = function(st){
+    tipState = loadTipState();
+    let n = parseInt(tipState.water)||0;
+    n = Math.max(0,Math.min(16,n+st));
+    tipState.water=n;
+    document.getElementById('waterCounter').textContent = n;
+    setTipsData();
+  }
+  window.resetWater = function(){
+    tipState = loadTipState();
+    tipState.water = 0;
+    document.getElementById('waterCounter').textContent = "0";
+    setTipsData();
+  }
+  updateMiniIndicators();
+
+  window.addEventListener('keydown',function(e){
+    if(e.key==="Escape") closeModal();
+  });
+
+  // При активации или переходе на страницу: если дата сменилась — сбрасываем
+  window.addEventListener('focus', function() {
+    let newTips = loadTipState();
+    let changed = false;
+    for(const key in tipState)
+      if (tipState[key] !== newTips[key]) { changed = true; break; }
+    if (changed) {
+      tipState = newTips;
+      updateMiniIndicators();
+    }
+  });
+</script>
+</body>
+</html>

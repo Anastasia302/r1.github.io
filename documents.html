@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+<title>Документы УФНС</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap">
+<style>
+  :root {
+    --ufns-corner: 40px;
+    --ufns-corner-mobile: 24px;
+    --ufns-btn-size: 40px;
+  }
+  html {
+    min-height: 100vh;
+    box-sizing: border-box;
+    max-width: 100vw;
+    overflow-x: hidden !important;
+  }
+  body {
+    margin: 0; padding: 0;
+    max-width: 100vw;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+    font-family: 'Montserrat', Arial, sans-serif;
+    background-color: #f9f9f9;
+    font-size: 1rem;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition:padding-right .24s;
+  }
+  header {
+    background: transparent;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 70px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .menu-icon {
+    position: absolute;
+    left: var(--ufns-corner);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1101;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: var(--ufns-btn-size);
+    height: var(--ufns-btn-size);
+    background-color: #007BFF;
+    border-radius: 50%;
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    transition: left .18s;
+  }
+  .menu-icon .bar {
+    width: 22px;
+    height: 3.5px;
+    background-color: white;
+    margin: 2.5px 0;
+    border-radius:1.5px;
+  }
+  .title-container {
+    flex: 1 1 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    pointer-events: none;
+    width: 100%;
+    position: relative;
+  }
+  .title {
+    background-color: #007BFF;
+    color: white;
+    padding: 0 22px;
+    display: flex;
+    align-items: center;
+    height: 46px;
+    border-radius: 50px;
+    font-size: 1.29rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+    margin: 0 auto;
+    pointer-events: all;
+  }
+  @media (max-width: 900px) {
+    .title-container { width: 100%; justify-content: center;}
+  }
+  @media (max-width: 600px) {
+    header { height: 53px;}
+    .menu-icon, .title { height: 35px; min-height: 35px; font-size: 1.08rem;}
+    .title { padding: 0 11px;}
+    .menu-icon {
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+      left: var(--ufns-corner-mobile);
+    }
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease, opacity 0.3s;
+    z-index: 1100;
+    box-sizing: border-box;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .sidebar.open {
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (max-width: 700px) {
+    .sidebar {
+      width: 50vw;
+      left: -50vw;
+      max-width: 100vw;
+      min-width: 140px;
+    }
+    .sidebar.open {
+      left: 0;
+    }
+  }
+  .sidebar button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background: none;
+    font-size: 1.13rem;
+    text-align: left;
+    cursor: pointer;
+    color: #333;
+    box-sizing: border-box;
+    user-select: none;
+    transition: background 0.13s;
+  }
+  .sidebar button.active, .sidebar button:hover {
+    background-color: #e1f0fc;
+  }
+  #page-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 70px;
+    padding: 0 10px 50px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 80vh;
+    transition: transform 0.3s ease;
+  }
+  @media (max-width: 900px) {
+    #page-wrapper { max-width: 98vw; }
+  }
+  @media (max-width: 600px) {
+    #page-wrapper { margin-top: 53px; }
+  }
+  .docs-block {
+    background: #fff;
+    padding: 28px 18px 34px 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+    width: 100%;
+    max-width: 550px;
+    margin: 28px auto 0 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  .docs-title {
+    font-size: 1.20rem;
+    font-weight: 700;
+    color: #007BFF;
+    margin: 0 auto 22px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: 100%;
+  }
+  .section-label {
+    margin:20px 0 10px 2px;
+    font-weight: 600;
+    color: #0080ff;
+    font-size: 1.04em;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    font-family: 'Montserrat', Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+  }
+  .doc-list {
+    list-style: none;
+    margin: 0 0 12px 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+  }
+  .doc-btn {
+    width: 100%;
+    background: linear-gradient(90deg, #f4faff 47%, #ecfaff 108%);
+    border: 3px solid #007bff;
+    border-radius: 38px;
+    box-shadow: 0 4px 15px rgba(0,123,255,0.08);
+    color: #007bff;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 1.08rem;
+    font-weight: 700;
+    text-align: justify;
+    text-justify: inter-word;
+    cursor: pointer;
+    outline: none;
+    letter-spacing: 0.01em;
+    padding: 17px 26px 17px 22px;
+    transition: background 0.21s, border 0.14s, box-shadow 0.22s, transform .13s, color 0.16s;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.28;
+    margin: 0 auto;
+    min-height: 0;
+    display: block;
+    box-sizing: border-box;
+    margin-bottom:1px;
+    text-decoration: none !important;
+  }
+  .doc-btn:focus, .doc-btn:hover {
+    background: linear-gradient(90deg,#e1f4ff 0%, #e8f6ff 100%);
+    color: #0056b3;
+    border-color: #2196f3;
+    text-decoration: none;
+    font-weight: 800;
+    transform: scale(1.012) translateY(-1.5px);
+    box-shadow: 0 6px 18px #74bcff12;
+  }
+  @media (max-width: 600px) {
+    .docs-block { padding: 14px 2vw 14px 2vw;}
+    .docs-title { font-size: 1.01rem;}
+    .section-label{margin-top:10px;margin-bottom:7px;}
+    .doc-btn {font-size: 0.97rem;}
+  }
+  .scroll-button {
+    position: fixed;
+    bottom: var(--ufns-corner);
+    right: var(--ufns-corner);
+    width: var(--ufns-btn-size);
+    height: var(--ufns-btn-size);
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    transition: background 0.19s, box-shadow 0.18s;
+    z-index: 2000;
+    padding: 0;
+    user-select: none;
+    outline: none;
+  }
+  .scroll-button:hover, .scroll-button:focus {
+    background: #095fd0;
+    box-shadow: 0 3px 16px rgba(0, 123, 255, 0.18);
+  }
+  .scroll-arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 23px;
+    height: 23px;
+    transition: transform .27s cubic-bezier(.46,.03,.52,.96);
+  }
+  .scroll-arrow.up {
+    transform: rotate(180deg);
+  }
+  @media (max-width: 600px){
+    .scroll-button {
+      right: var(--ufns-corner-mobile);
+      bottom: var(--ufns-corner-mobile);
+      width: var(--ufns-btn-size);
+      height: var(--ufns-btn-size);
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="menu-icon" id="menu-icon" aria-label="Открыть меню" role="button" tabindex="0">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <div class="title-container">
+    <div class="title">Документы</div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar" aria-hidden="true" role="navigation">
+  <button onclick="window.location.href='index.html'">Главная страница</button>
+  <button onclick="window.location.href='account.html'">Аккаунт</button>
+  <button onclick="window.location.href='calendar.html'">Календарь</button>
+  <button onclick="window.location.href='test.html'">Тест</button>
+  <button onclick="window.location.href='honor_board.html'">Доска почета</button>
+  <button onclick="window.location.href='psychologist.html'">Психолог</button>
+  <button onclick="window.location.href='documents.html'" class="active">Документы</button>
+  <button onclick="window.location.href='vacation.html'">Отпуск</button>
+  <button onclick="window.location.href='lost_and_found.html'">Потеряшки</button>
+  <button onclick="window.location.href='health.html'">Здоровье</button>
+  <button onclick="window.location.href='offers.html'">Предложения</button>
+</div>
+<div id="page-wrapper" tabindex="-1">
+  <div class="docs-block">
+    <div class="docs-title">Документы для сотрудников УФНС России</div>
+    <div class="section-label">Основные законы и положения</div>
+    <ul class="doc-list">
+      <li>
+        <a class="doc-btn" href="https://base.garant.ru/180891/" target="_blank">
+          Федеральный закон "О государственной гражданской службе РФ" №79-ФЗ
+        </a>
+      </li>
+      <li>
+        <a class="doc-btn" href="https://www.consultant.ru/document/cons_doc_LAW_34683/" target="_blank">
+          Трудовой кодекс Российской Федерации
+        </a>
+      </li>
+    </ul>
+    <div class="section-label">Справки и шаблоны</div>
+    <ul class="doc-list">
+      <li>
+        <a class="doc-btn" href="https://www.consultant.ru/document/cons_doc_LAW_68466/6b111d593b122a7d6b20fd37c469eac52bfc6367/" target="_blank">
+          Примерная форма справки о доходах (2-НДФЛ)
+        </a>
+      </li>
+    </ul>
+    <div class="section-label">Сайты и контакты</div>
+    <ul class="doc-list">
+      <li>
+        <a class="doc-btn" href="https://www.nalog.gov.ru/" target="_blank">
+          Официальный сайт ФНС России
+        </a>
+      </li>
+      <li>
+        <a class="doc-btn" href="https://www.nalog.gov.ru/rn77/about_fts/contacts/" target="_blank">
+          Контакты и телефоны подразделений ФНС России (г. Москва)
+        </a>
+      </li>
+      <li>
+        <a class="doc-btn" href="https://www.nalog.gov.ru/rn77/service/obrashchenie/" target="_blank">
+          Отправить обращение в ФНС онлайн
+        </a>
+      </li>
+      <li>
+        <a class="doc-btn" href="https://www.nalog.gov.ru/rn77/about_fts/" target="_blank">
+          О Управлении Федеральной налоговой службы по г. Москве
+        </a>
+      </li>
+      <li>
+        <a class="doc-btn" href="https://www.nalog.gov.ru/rn77/service/podvedomstven/" target="_blank">
+          Поиск подведомственных организаций
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<button class="scroll-button" id="scroll-button" title="Наверх/вниз">
+  <span id="scroll-arrow" class="scroll-arrow">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 10 12 16 18 10"/>
+    </svg>
+  </span>
+</button>
+<script>
+  // Функция подсчёта ширины скроллбара
+  function getScrollbarWidth() {
+    const div = document.createElement('div');
+    div.style.visibility = 'hidden';
+    div.style.overflow = 'scroll';
+    div.style.position = 'absolute';
+    div.style.top = '-9999px';
+    div.style.width = '100px';
+    div.style.height = '100px';
+    document.body.appendChild(div);
+    const scrollbarWidth = div.offsetWidth - div.clientWidth;
+    document.body.removeChild(div);
+    return scrollbarWidth;
+  }
+  // Меню
+  const menuIcon = document.getElementById('menu-icon');
+  const sidebar = document.getElementById('sidebar');
+  const pageWrapper = document.getElementById('page-wrapper');
+  let scrollPos = 0;
+  function isMobile() { return window.innerWidth <= 700;}
+  function openMenu() {
+    scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    sidebar.classList.add('open');
+    sidebar.setAttribute('aria-hidden', 'false');
+    const sbw = getScrollbarWidth();
+    if (isMobile()) {
+      pageWrapper.style.position = 'fixed';
+      pageWrapper.style.top = `-${scrollPos}px`;
+      pageWrapper.style.left = '0'; pageWrapper.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    } else {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = sbw + 'px';
+    }
+  }
+  function closeMenu() {
+    sidebar.classList.remove('open');
+    sidebar.setAttribute('aria-hidden', 'true');
+    if (isMobile()) {
+      pageWrapper.style.position = '';
+      pageWrapper.style.top = '';
+      pageWrapper.style.left = '';
+      pageWrapper.style.right = '';
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      window.scrollTo(0, scrollPos);
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
+  menuIcon.addEventListener('click', () => {
+    if (sidebar.classList.contains('open')) closeMenu(); else openMenu();
+  });
+  document.addEventListener('click', e => {
+    if (
+      sidebar.classList.contains('open') &&
+      !sidebar.contains(e.target) &&
+      !menuIcon.contains(e.target)
+    ) closeMenu();
+  });
+
+  // Кнопка "Вверх/Вниз" (SVG)
+  const scrollButton = document.getElementById('scroll-button');
+  const scrollArrow = document.getElementById('scroll-arrow');
+  function isAtTop() {
+    return (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0) < 10;
+  }
+  function updateArrow() {
+    const arrow = document.getElementById('scroll-arrow');
+    if (isAtTop()) {
+      arrow.classList.remove('up');
+      scrollButton.title = "Вниз";
+    } else {
+      arrow.classList.add('up');
+      scrollButton.title = "Вверх";
+    }
+  }
+  scrollButton.addEventListener('click', () => {
+    if (isAtTop()) {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  window.addEventListener('scroll', updateArrow);
+  updateArrow();
+</script>
+</body>
+</html>

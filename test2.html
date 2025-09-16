@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>Тест в разработке</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700&display=swap">
+<style>
+:root {
+  --ufns-corner: 40px;
+  --ufns-corner-mobile: 24px;
+  --ufns-btn-size: 40px;
+}
+html {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+body {
+  margin: 0; padding: 0;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+  font-family: 'Montserrat', Arial, sans-serif;
+  background-color: #f9f9f9;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+header {
+  background: transparent;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+.menu-icon {
+  position: absolute;
+  left: var(--ufns-corner);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1101;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: var(--ufns-btn-size);
+  height: var(--ufns-btn-size);
+  background-color: #007BFF;
+  border-radius: 50%;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: left .18s;
+}
+.menu-icon .bar {
+  width: 22px;
+  height: 3.5px;
+  background-color: white;
+  margin: 2.5px 0;
+  border-radius:1.5px;
+}
+.title-container {
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  pointer-events: none;
+  width: 100%;
+  position: relative;
+}
+.title {
+  background-color: #007BFF;
+  color: white;
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  border-radius: 50px;
+  font-size: 1.29rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  margin: 0 auto;
+  pointer-events: all;
+}
+@media (max-width: 900px) {
+  .title-container { width: 100%; justify-content: center;}
+}
+@media (max-width: 600px) {
+  header { height: 53px;}
+  .menu-icon, .title { height: 35px; min-height: 35px; font-size: 1.08rem;}
+  .title { padding: 0 11px;}
+  .menu-icon {
+    width: var(--ufns-btn-size);
+    height: var(--ufns-btn-size);
+    left: var(--ufns-corner-mobile);
+  }
+}
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background-color: white;
+  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease, opacity 0.3s;
+  z-index: 1100;
+  box-sizing: border-box;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar.open {
+  left: 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (max-width: 700px) {
+  .sidebar {
+    width: 50vw;
+    left: -50vw;
+    max-width: 100vw;
+    min-width: 140px;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+}
+.sidebar button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+  box-sizing: border-box;
+  user-select: none;
+  transition: background 0.13s;
+}
+.sidebar button.active, .sidebar button:hover {
+  background-color: #e1f0fc;
+}
+#page-wrapper {
+  width: 100vw;
+  margin-top: 70px;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  #page-wrapper {
+    margin-top: 53px;
+    min-height: calc(100vh - 53px);
+  }
+}
+.center-card {
+  background: #fff;
+  max-width: 420px;
+  margin: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  border-radius: 20px;
+  display: flex;
+  padding: 38px 28px 32px 28px;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.19rem;
+  line-height: 1.45;
+  color: #26486e;
+  text-align: center;
+  min-width: 0;
+  word-break: break-word;
+}
+.center-card .big-emoji {
+  font-size: 2.5em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.center-card .main-message {
+  margin-bottom: 14px;
+  font-weight: 700;
+  font-size: 1.21em;
+  color: #007bff;
+}
+.center-card .important {
+  color: #007bff;
+  font-weight: 700;
+}
+.center-card .test-link {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 0 0 2px 0;
+  font-size: 1.13em;
+  color: #fff;
+  background: linear-gradient(90deg,#007bff 80%,#01b5fc 120%);
+  border-radius:20px;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 2px 12px #4573c218;
+  transition: background .15s, color .12s;
+  padding: 7px 23px 9px 23px;
+}
+.center-card .test-link:hover { background: #0056b3; color: #fff;}
+@media (max-width: 520px) {
+  .center-card { max-width: 99vw; padding: 9vw 2vw 7vw 2vw; font-size:1.04rem;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="menu-icon" id="menu-icon" aria-label="Открыть меню" role="button" tabindex="0">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <div class="title-container">
+    <div class="title">Тестирование</div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar" aria-hidden="true" role="navigation">
+  <button onclick="window.location.href='index.html'">Главная страница</button>
+  <button onclick="window.location.href='account.html'">Аккаунт</button>
+  <button onclick="window.location.href='calendar.html'">Календарь</button>
+  <button onclick="window.location.href='test.html'" class="active">Тест</button>
+  <button onclick="window.location.href='honor_board.html'">Доска почета</button>
+  <button onclick="window.location.href='psychologist.html'">Психолог</button>
+  <button onclick="window.location.href='documents.html'">Документы</button>
+  <button onclick="window.location.href='vacation.html'">Отпуск</button>
+  <button onclick="window.location.href='lost_and_found.html'">Потеряшки</button>
+  <button onclick="window.location.href='health.html'">Здоровье</button>
+  <button onclick="window.location.href='offers.html'">Предложения</button>
+</div>
+<div id="page-wrapper" tabindex="-1">
+  <div class="center-card">
+    <div class="big-emoji">🛠️</div>
+    <div class="main-message">Раздел в разработке</div>
+    <div>Скоро вы сможете пройти тестирование по этой главе.<br>
+      Пока что доступен только <span class="important">тест по 1 главе</span>.</div>
+    <a class="test-link" href="test1.html">Перейти к тесту по 1 главе</a>
+  </div>
+</div>
+<script>
+function getScrollbarWidth() {
+  const div = document.createElement('div');
+  div.style.visibility = 'hidden';
+  div.style.overflow = 'scroll';
+  div.style.position = 'absolute';
+  div.style.top = '-9999px';
+  div.style.width = '100px';
+  div.style.height = '100px';
+  document.body.appendChild(div);
+  const scrollbarWidth = div.offsetWidth - div.clientWidth;
+  document.body.removeChild(div);
+  return scrollbarWidth;
+}
+const menuIcon = document.getElementById('menu-icon');
+const sidebar = document.getElementById('sidebar');
+const pageWrapper = document.getElementById('page-wrapper');
+let scrollPos = 0;
+function isMobile() { return window.innerWidth <= 700;}
+function openMenu() {
+  scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+  sidebar.classList.add('open');
+  sidebar.setAttribute('aria-hidden', 'false');
+  const sbw = getScrollbarWidth();
+  if (isMobile()) {
+    pageWrapper.style.position = 'fixed';
+    pageWrapper.style.top = `-${scrollPos}px`;
+    pageWrapper.style.left = '0'; pageWrapper.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = sbw + 'px';
+  } else {
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = sbw + 'px';
+  }
+}
+function closeMenu() {
+  sidebar.classList.remove('open');
+  sidebar.setAttribute('aria-hidden', 'true');
+  if (isMobile()) {
+    pageWrapper.style.position = '';
+    pageWrapper.style.top = '';
+    pageWrapper.style.left = '';
+    pageWrapper.style.right = '';
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    window.scrollTo(0, scrollPos);
+  } else {
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+  }
+}
+menuIcon.addEventListener('click', () => {
+  if (sidebar.classList.contains('open')) closeMenu(); else openMenu();
+});
+document.addEventListener('click', e => {
+  if (
+    sidebar.classList.contains('open') &&
+    !sidebar.contains(e.target) &&
+    !menuIcon.contains(e.target)
+  ) closeMenu();
+});
+</script>
+</body>
+</html>
